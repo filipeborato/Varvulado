@@ -3,6 +3,9 @@
 **Description:**
 12AX7 tube simulation VST
 
+<img width="402" height="358" alt="image" src="https://github.com/user-attachments/assets/111e4c0e-523b-4336-a8e6-d75802bdede7" />
+
+
 ---
 
 ## Table of Contents
