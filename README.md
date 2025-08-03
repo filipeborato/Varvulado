@@ -32,7 +32,7 @@ Varvulado is a VST3 plugin that emulates the classic 12AX7 tube preamp. It deliv
 
 * Windows 10 or 11 (x64)
 * Visual Studio Community 2022
-* JUCE 7 (include the `Juce/` folder or reference via CMake)
+* JUCE 8 (include the `Juce/` folder or reference via CMake)
 * CMake (version 3.15 or newer)
 * (Optional) Simulink Coder for regenerating the Simulink model
 
