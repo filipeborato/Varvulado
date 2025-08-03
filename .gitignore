@@ -1,0 +1,86 @@
+# JUCE specific
+/Builds
+/JuceLibraryCode
+
+# Visual Studio
+.vs/
+*.vcxproj.user
+*.suo
+*.sdf
+*.opensdf
+*.db
+*.ipch
+*.tmp
+*.log
+*.tlog
+*.idb
+*.pdb
+*.ilk
+*.exp
+*.lib
+*.dll
+*.exe
+bin/
+obj/
+Debug/
+Release/
+x64/
+x86/
+
+# Xcode
+*.xcodeproj/
+*.xcworkspace/
+DerivedData/
+build/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Audio plugin formats (compiled outputs)
+*.vst
+*.vst3
+*.au
+*.component
+*.aax
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Node.js (if using any JS tools)
+node_modules/
+npm-debug.log*
+
+# Python (if using any Python scripts)
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
