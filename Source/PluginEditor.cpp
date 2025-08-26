@@ -388,12 +388,12 @@ void TubePreampPluginAudioProcessorEditor::timerCallback()
     // Gradual heat response: start after ~0.7 drive, smooth over time
     if (driveParam != nullptr)
     {
-        const float dv = juce::jlimit<float>(0.1f, 10.0f, *driveParam);
+        const float dv = juce::jlimit<float>(0.1f, 5.0f, *driveParam);
         const float th = 0.7f;                   // threshold to start glowing
         float target = 0.0f;
         if (dv > th)
         {
-            const float tLin = (dv - th) / (10.0f - th);      // 0..1 from threshold to max
+            const float tLin = (dv - th) / (5.0f - th);       // 0..1 from threshold to max
             target = std::pow(juce::jlimit<float>(0.0f, 1.0f, tLin), 1.6f); // ease-in for gradual rise
         }
         // Low-pass filter toward target for smooth visual response
