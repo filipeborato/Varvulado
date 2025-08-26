@@ -28,7 +28,16 @@ target_sources(TubePreampPlugin PRIVATE
     Source/PluginParameters.h
     Source/TubeModel.cpp
     Source/TubeModel.h
+    Source/VintageLookAndFeel.cpp
+    Source/VintageLookAndFeel.h
 )
+
+# Include Projucer-generated BinaryData if present (embedded resources)
+if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/JuceLibraryCode/BinaryData.cpp)
+    message(STATUS "Including Projucer BinaryData.cpp for embedded resources")
+    target_sources(TubePreampPlugin PRIVATE JuceLibraryCode/BinaryData.cpp)
+    target_include_directories(TubePreampPlugin PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/JuceLibraryCode)
+endif()
 
 target_compile_definitions(TubePreampPlugin PRIVATE JUCE_WEB_BROWSER=0)
 
