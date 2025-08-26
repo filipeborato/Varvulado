@@ -15,6 +15,8 @@
       <FILE id="UpXrhw" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="aHmgWC" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="vLNFcpp" name="VintageLookAndFeel.cpp" compile="1" resource="0" file="Source/VintageLookAndFeel.cpp"/>
+      <FILE id="vLNFhpp" name="VintageLookAndFeel.h" compile="0" resource="0" file="Source/VintageLookAndFeel.h"/>
     </GROUP>
     <GROUP id="resGrp1" name="resources">
       <FILE id="logoPng" name="logo.png" compile="0" resource="1" file="Source/resources/logo.png"/>

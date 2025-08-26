@@ -28,6 +28,8 @@ target_sources(TubePreampPlugin PRIVATE
     Source/PluginParameters.h
     Source/TubeModel.cpp
     Source/TubeModel.h
+    Source/VintageLookAndFeel.cpp
+    Source/VintageLookAndFeel.h
 )
 
 # Include Projucer-generated BinaryData if present (embedded resources)

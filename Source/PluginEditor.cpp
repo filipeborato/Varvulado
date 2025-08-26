@@ -56,6 +56,9 @@ TubePreampPluginAudioProcessorEditor::TubePreampPluginAudioProcessorEditor(
     // Drive Slider
     driveSlider.setSliderStyle(juce::Slider::Rotary);
     driveSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 16);
+    driveSlider.setLookAndFeel(&vintageLNF);
+    driveSlider.setRotaryParameters(juce::MathConstants<float>::pi * 1.25f,
+                                    juce::MathConstants<float>::pi * 2.75f, true);
     addAndMakeVisible(driveSlider);
     driveAttach = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(state, "drive", driveSlider);
 
@@ -68,6 +71,9 @@ TubePreampPluginAudioProcessorEditor::TubePreampPluginAudioProcessorEditor(
     // Output Slider
     outputSlider.setSliderStyle(juce::Slider::Rotary);
     outputSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 16);
+    outputSlider.setLookAndFeel(&vintageLNF);
+    outputSlider.setRotaryParameters(juce::MathConstants<float>::pi * 1.25f,
+                                     juce::MathConstants<float>::pi * 2.75f, true);
     addAndMakeVisible(outputSlider);
     outputAttach = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(state, "output", outputSlider);
 
@@ -80,6 +86,9 @@ TubePreampPluginAudioProcessorEditor::TubePreampPluginAudioProcessorEditor(
     // Bias Slider
     biasSlider.setSliderStyle(juce::Slider::Rotary);
     biasSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 16);
+    biasSlider.setLookAndFeel(&vintageLNF);
+    biasSlider.setRotaryParameters(juce::MathConstants<float>::pi * 1.25f,
+                                   juce::MathConstants<float>::pi * 2.75f, true);
     addAndMakeVisible(biasSlider);
     biasAttach = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(state, "bias", biasSlider);
 
@@ -90,7 +99,12 @@ TubePreampPluginAudioProcessorEditor::TubePreampPluginAudioProcessorEditor(
     addAndMakeVisible(biasLabel);
 }
 
-TubePreampPluginAudioProcessorEditor::~TubePreampPluginAudioProcessorEditor() {}
+TubePreampPluginAudioProcessorEditor::~TubePreampPluginAudioProcessorEditor()
+{
+    driveSlider.setLookAndFeel(nullptr);
+    outputSlider.setLookAndFeel(nullptr);
+    biasSlider.setLookAndFeel(nullptr);
+}
 
 void TubePreampPluginAudioProcessorEditor::paint(juce::Graphics& g) {
     // Ensure/paint velvet background

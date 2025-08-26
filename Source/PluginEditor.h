@@ -4,6 +4,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "VintageLookAndFeel.h"
 
 class TubePreampPluginAudioProcessorEditor : public juce::AudioProcessorEditor {
 public:
@@ -28,6 +29,8 @@ private:
     juce::Image velvetBackground;
     void regenerateVelvetBackground();
     void drawLogoBlended(juce::Graphics& g, juce::Rectangle<int> dstArea);
+
+    VintageLookAndFeel vintageLNF;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TubePreampPluginAudioProcessorEditor)
 };
