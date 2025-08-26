@@ -162,7 +162,7 @@ void TubePreampPluginAudioProcessorEditor::paint(juce::Graphics& g) {
     if (velvetBackground.isValid())
         g.drawImageAt(velvetBackground, 0, 0);
     else
-        g.fillAll(juce::Colours::darkblue.darker(0.6f));
+        g.fillAll(juce::Colour::fromRGB(18, 12, 38)); // deep indigo fallback
 
     // Header/title area, text centered but avoiding actual logo/tube bounds
     auto inner = getLocalBounds().reduced(20);
@@ -337,7 +337,7 @@ void TubePreampPluginAudioProcessorEditor::drawLogoBlended(juce::Graphics& g, ju
 
             // Suppress blue fringing only near edges (very gentle)
             const float maxRG = std::max(sr, sg);
-            float blueFringe = juce::jlimit(0.0f, 1.0f, (sb - maxRG - 0.08f) * 0.8f);
+            float blueFringe = juce::jlimit<float>(0.0f, 1.0f, (sb - maxRG - 0.08f) * 0.8f);
 
             // Edge metrics
             const int edgePx = 2;
@@ -346,7 +346,7 @@ void TubePreampPluginAudioProcessorEditor::drawLogoBlended(juce::Graphics& g, ju
             const float edgeFeather = minEdge < 1 ? (1.0f - (float) minEdge) : 0.0f; // 0..1
 
             a = a * (1.0f - 0.20f * blueFringe * edgeFactor) * (1.0f - 0.04f * edgeFeather);
-            a = juce::jlimit(0.0f, 1.0f, a * 1.25f + 0.08f); // stronger alpha boost with floor
+            a = juce::jlimit<float>(0.0f, 1.0f, a * 1.25f + 0.08f); // stronger alpha boost with floor
 
             // Multiply blend to inherit velvet tone
             float br = b.getFloatRed();
@@ -354,9 +354,9 @@ void TubePreampPluginAudioProcessorEditor::drawLogoBlended(juce::Graphics& g, ju
             float bb = b.getFloatBlue();
 
             // Pre-boost logo more to avoid looking washed out
-            sr = juce::jlimit(0.0f, 1.0f, sr * 1.12f + 0.02f);
-            sg = juce::jlimit(0.0f, 1.0f, sg * 1.12f + 0.02f);
-            sb = juce::jlimit(0.0f, 1.0f, sb * 1.12f + 0.02f);
+            sr = juce::jlimit<float>(0.0f, 1.0f, sr * 1.12f + 0.02f);
+            sg = juce::jlimit<float>(0.0f, 1.0f, sg * 1.12f + 0.02f);
+            sb = juce::jlimit<float>(0.0f, 1.0f, sb * 1.12f + 0.02f);
 
             // Use normal blend colours (no multiply/screen) for maximum visibility
             float cr = sr;
@@ -380,9 +380,26 @@ void TubePreampPluginAudioProcessorEditor::drawLogoBlended(juce::Graphics& g, ju
 
 void TubePreampPluginAudioProcessorEditor::timerCallback()
 {
+    // Animate flicker phase
     tubeAnimPhase += 0.07f;
     if (tubeAnimPhase > juce::MathConstants<float>::twoPi)
         tubeAnimPhase -= juce::MathConstants<float>::twoPi;
+
+    // Gradual heat response: start after ~0.7 drive, smooth over time
+    if (driveParam != nullptr)
+    {
+        const float dv = juce::jlimit<float>(0.1f, 10.0f, *driveParam);
+        const float th = 0.7f;                   // threshold to start glowing
+        float target = 0.0f;
+        if (dv > th)
+        {
+            const float tLin = (dv - th) / (10.0f - th);      // 0..1 from threshold to max
+            target = std::pow(juce::jlimit<float>(0.0f, 1.0f, tLin), 1.6f); // ease-in for gradual rise
+        }
+        // Low-pass filter toward target for smooth visual response
+        const float alpha = 0.12f;   // smoothing factor per frame (~30fps)
+        tubeHeat += (target - tubeHeat) * alpha;
+    }
     repaint();
 }
 
@@ -395,21 +412,9 @@ void TubePreampPluginAudioProcessorEditor::drawTubeValve(juce::Graphics& g, juce
     const auto c = area.getCentre().toFloat();
     juce::ignoreUnused(c);
 
-    // Determine heat based on drive (log-mapped for earlier glow around ~1.5)
-    float drive = 0.0f;
-    if (driveParam != nullptr)
-        drive = *driveParam;
-    const float dmin = 0.1f, dmax = 10.0f;
-    float dv = juce::jlimit(dmin, dmax, drive);
-    float norm = 0.0f;
-    {
-        const float denom = std::log(dmax / dmin);
-        norm = (float) (std::log(dv / dmin) / denom); // 0..1
-        norm = juce::jlimit(0.0f, 1.0f, norm);
-        norm = std::pow(norm, 0.85f); // ease-in a bit
-    }
+    // Effective heat: gradual base from timer + flicker modulation
     const float flicker = 0.92f + 0.12f * std::sin(tubeAnimPhase * 3.0f) + 0.06f * std::sin(tubeAnimPhase * 5.2f);
-    const float heat = juce::jlimit(0.0f, 1.3f, (0.12f + 0.98f * norm) * flicker);
+    const float heat = juce::jlimit<float>(0.0f, 1.3f, (0.08f + 1.05f * tubeHeat) * flicker);
 
     // Backplate shadow
     g.setColour(juce::Colours::black.withAlpha(0.22f));
@@ -454,14 +459,14 @@ void TubePreampPluginAudioProcessorEditor::drawTubeValve(juce::Graphics& g, juce
         juce::Rectangle<float> heater((float) area.getX() + w * 0.24f,
                                       (float) area.getY() + h * 0.62f,
                                       w * 0.52f, h * 0.14f);
-        juce::Colour hot1 = juce::Colour::fromFloatRGBA(1.0f, 0.55f, 0.10f, juce::jlimit(0.12f, 0.75f, heat * 0.75f));
-        juce::Colour hot2 = juce::Colour::fromFloatRGBA(1.0f, 0.86f, 0.40f, juce::jlimit(0.18f, 0.95f, heat * 0.95f));
+        juce::Colour hot1 = juce::Colour::fromFloatRGBA(1.0f, 0.55f, 0.10f, juce::jlimit<float>(0.12f, 0.75f, heat * 0.75f));
+        juce::Colour hot2 = juce::Colour::fromFloatRGBA(1.0f, 0.86f, 0.40f, juce::jlimit<float>(0.18f, 0.95f, heat * 0.95f));
         juce::ColourGradient glow(hot2, heater.getCentreX(), heater.getY(), hot1, heater.getCentreX(), heater.getBottom(), false);
         g.setGradientFill(glow);
         g.fillRoundedRectangle(heater, 6.0f);
 
         // Additional halo
-        juce::Colour halo = juce::Colour::fromFloatRGBA(1.0f, 0.6f, 0.15f, juce::jlimit(0.0f, 0.50f, heat * 0.50f));
+        juce::Colour halo = juce::Colour::fromFloatRGBA(1.0f, 0.6f, 0.15f, juce::jlimit<float>(0.0f, 0.50f, heat * 0.50f));
         g.setColour(halo);
         for (int i = 0; i < 3; ++i)
             g.fillEllipse(heater.expanded(h * (0.05f + 0.03f * i)));
@@ -523,9 +528,9 @@ void TubePreampPluginAudioProcessorEditor::regenerateVelvetBackground()
     // Deterministic seed for grain; use valid hex literal
     juce::Random rng((juce::int64) 0xB1DEA1);
 
-    // Base and highlight colours
-    const juce::Colour base = juce::Colour::fromFloatRGBA(0.03f, 0.08f, 0.26f, 1.0f); // deep blue
-    const juce::Colour hi   = juce::Colour::fromFloatRGBA(0.12f, 0.22f, 0.60f, 1.0f); // highlight blue
+    // Base and highlight colours (deep purple-blue)
+    const juce::Colour base = juce::Colour::fromFloatRGBA(0.07f, 0.04f, 0.18f, 1.0f); // deep indigo
+    const juce::Colour hi   = juce::Colour::fromFloatRGBA(0.20f, 0.12f, 0.45f, 1.0f); // purple-blue highlight
 
     for (int y = 0; y < h; ++y)
     {
@@ -542,9 +547,9 @@ void TubePreampPluginAudioProcessorEditor::regenerateVelvetBackground()
             // Sheen: simulate angle-dependent highlight
             const float sheen = 0.15f * std::sin((x * 0.012f) + (y * 0.02f));
 
-            float shade = juce::jlimit(0.0f, 1.4f, 0.55f + 0.45f * fx);
+            float shade = juce::jlimit<float>(0.0f, 1.4f, 0.55f + 0.45f * fx);
             shade = shade * vignetteY + sheen + grain;
-            shade = juce::jlimit(0.0f, 1.2f, shade);
+            shade = juce::jlimit<float>(0.0f, 1.2f, shade);
 
             // Mix base and highlight by shade
             const int r = juce::jlimit(0, 255, (int) std::round(base.getRed()   * (1.0f - shade) + hi.getRed()   * shade));
@@ -560,16 +565,16 @@ void TubePreampPluginAudioProcessorEditor::regenerateVelvetBackground()
         juce::Graphics gg(velvetBackground);
 
         juce::ColourGradient diag(juce::Colours::transparentBlack, {0.0f, 0.0f},
-                                  juce::Colour(255, 255, 255).withAlpha(0.06f), { (float) w, (float) h }, false);
+                                  juce::Colour(255, 255, 255).withAlpha(0.05f), { (float) w, (float) h }, false);
         gg.setGradientFill(diag);
         gg.fillAll();
 
-        juce::ColourGradient vign(juce::Colours::black.withAlpha(0.12f), {0.0f, 0.0f},
+        juce::ColourGradient vign(juce::Colours::black.withAlpha(0.16f), {0.0f, 0.0f},
                                   juce::Colours::transparentBlack, { (float) w * 0.6f, (float) h * 0.6f }, true);
         gg.setGradientFill(vign);
         gg.fillEllipse(-w * 0.2f, -h * 0.2f, w * 0.8f, h * 0.8f);
 
-        juce::ColourGradient vign2(juce::Colours::black.withAlpha(0.12f), { (float) w, (float) h },
+        juce::ColourGradient vign2(juce::Colours::black.withAlpha(0.16f), { (float) w, (float) h },
                                    juce::Colours::transparentBlack, { (float) w * 0.4f, (float) h * 0.4f }, true);
         gg.setGradientFill(vign2);
         gg.fillEllipse(w * 0.4f, h * 0.4f, w * 0.8f, h * 0.8f);

@@ -36,6 +36,7 @@ private:
     void timerCallback() override;
     void drawTubeValve(juce::Graphics& g, juce::Rectangle<int> area);
     float tubeAnimPhase { 0.0f };
+    float tubeHeat { 0.0f };
     std::atomic<float>* driveParam { nullptr };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TubePreampPluginAudioProcessorEditor);

@@ -5,9 +5,9 @@
 
 static juce::Colour withGain(juce::Colour c, float gain) {
     return juce::Colour::fromFloatRGBA(
-        juce::jlimit(0.0f, 1.0f, c.getFloatRed()   * gain),
-        juce::jlimit(0.0f, 1.0f, c.getFloatGreen() * gain),
-        juce::jlimit(0.0f, 1.0f, c.getFloatBlue()  * gain),
+        juce::jlimit<float>(0.0f, 1.0f, c.getFloatRed()   * gain),
+        juce::jlimit<float>(0.0f, 1.0f, c.getFloatGreen() * gain),
+        juce::jlimit<float>(0.0f, 1.0f, c.getFloatBlue()  * gain),
         c.getFloatAlpha());
 }
 
@@ -114,7 +114,7 @@ void VintageLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int w
     {
         const float pr0 = rInner * 0.18f;    // inner start
         const float pr1 = rInner * 0.96f;    // to rim
-        const float halfA = juce::jlimit(0.06f, 0.12f, rInner * 0.0008f + 0.09f); // wedge half-angle
+        const float halfA = juce::jlimit<float>(0.06f, 0.12f, rInner * 0.0008f + 0.09f); // wedge half-angle
 
         juce::Path wedge;
         auto p0 = juce::Point<float>(centre.x + std::cos(angle - halfA) * pr0,
