@@ -16,6 +16,9 @@
             file="Source/PluginEditor.cpp"/>
       <FILE id="aHmgWC" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
+    <GROUP id="resGrp1" name="resources">
+      <FILE id="logoPng" name="logo.png" compile="0" resource="1" file="Source/resources/logo.png"/>
+    </GROUP>
   </MAINGROUP>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
