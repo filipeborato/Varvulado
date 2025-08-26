@@ -24,5 +24,10 @@ private:
     // Logo image (optional, drawn bottom-right without affecting layout)
     juce::Image logo;
 
+    // Cached velvet background
+    juce::Image velvetBackground;
+    void regenerateVelvetBackground();
+    void drawLogoBlended(juce::Graphics& g, juce::Rectangle<int> dstArea);
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TubePreampPluginAudioProcessorEditor)
 };
