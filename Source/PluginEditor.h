@@ -6,7 +6,7 @@
 #include "PluginProcessor.h"
 #include "VintageLookAndFeel.h"
 
-class TubePreampPluginAudioProcessorEditor : public juce::AudioProcessorEditor {
+class TubePreampPluginAudioProcessorEditor : public juce::AudioProcessorEditor, private juce::Timer {
 public:
     TubePreampPluginAudioProcessorEditor(TubePreampPluginAudioProcessor&, juce::AudioProcessorValueTreeState&);
     ~TubePreampPluginAudioProcessorEditor() override;
@@ -32,5 +32,11 @@ private:
 
     VintageLookAndFeel vintageLNF;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TubePreampPluginAudioProcessorEditor)
+    // Tube valve animation (top-right)
+    void timerCallback() override;
+    void drawTubeValve(juce::Graphics& g, juce::Rectangle<int> area);
+    float tubeAnimPhase { 0.0f };
+    std::atomic<float>* driveParam { nullptr };
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TubePreampPluginAudioProcessorEditor);
 };

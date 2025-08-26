@@ -96,7 +96,7 @@ void VintageLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int w
     // Index tick ring on panel (subtle)
     {
         const float ringR = rOuter + 6.0f;
-        const int ticks = 11; // every ~step
+        const int ticks = 11; // includes center
         for (int i = 0; i < ticks; ++i)
         {
             const float t = (float) i / (float) (ticks - 1);
@@ -104,8 +104,9 @@ void VintageLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int w
             juce::Point<float> p0(centre.x + std::cos(a) * (ringR - 5.0f), centre.y + std::sin(a) * (ringR - 5.0f));
             juce::Point<float> p1(centre.x + std::cos(a) * (ringR - 2.0f), centre.y + std::sin(a) * (ringR - 2.0f));
             const bool endTick = (i == 0 || i == ticks - 1);
-            g.setColour(juce::Colours::white.withAlpha(endTick ? 0.18f : 0.10f));
-            g.drawLine({ p0, p1 }, endTick ? 1.2f : 0.8f);
+            const bool midTick = (i == (ticks - 1) / 2);
+            g.setColour(juce::Colours::white.withAlpha(midTick ? 0.22f : (endTick ? 0.16f : 0.10f)));
+            g.drawLine({ p0, p1 }, midTick ? 1.3f : (endTick ? 1.0f : 0.8f));
         }
     }
 
