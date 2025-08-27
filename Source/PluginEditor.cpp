@@ -71,7 +71,7 @@ TubePreampPluginAudioProcessorEditor::TubePreampPluginAudioProcessorEditor(
     // Improve midrange control around ~2.5 on 0.1..10
     driveSlider.setSkewFactorFromMidPoint(2.5);
     driveSlider.setVelocityBasedMode(true);
-    driveSlider.setVelocityModeParameters(1.0, 1, 0.0, true);
+    driveSlider.setVelocityModeParameters(1.0, 1, 0.07, true);
     driveSlider.setMouseDragSensitivity(220);
     driveSlider.setPopupDisplayEnabled(true, false, this);
     driveSlider.setDoubleClickReturnValue(true, 1.0);
@@ -98,7 +98,7 @@ TubePreampPluginAudioProcessorEditor::TubePreampPluginAudioProcessorEditor(
     // Improve fine control near 0.5 on 0..1
     outputSlider.setSkewFactorFromMidPoint(0.5);
     outputSlider.setVelocityBasedMode(true);
-    outputSlider.setVelocityModeParameters(1.0, 1, 0.0, true);
+    outputSlider.setVelocityModeParameters(1.0, 1, 0.07, true);
     outputSlider.setMouseDragSensitivity(220);
     outputSlider.setPopupDisplayEnabled(true, false, this);
     outputSlider.setDoubleClickReturnValue(true, 0.8);
@@ -123,17 +123,26 @@ TubePreampPluginAudioProcessorEditor::TubePreampPluginAudioProcessorEditor(
         biasSlider.setRotaryParameters(rp);
     }
     biasSlider.setVelocityBasedMode(true);
-    biasSlider.setVelocityModeParameters(1.0, 1, 0.0, true);
-    biasSlider.setMouseDragSensitivity(220);
+    // Ajustado para melhor controle fino: menor sensibilidade, threshold mais alto, sem offset
+    biasSlider.setVelocityModeParameters(0.5, 3, 0.0, true);
+    // Aumentada a sensibilidade de drag para movimentos mais suaves e precisos
+    biasSlider.setMouseDragSensitivity(350);
     biasSlider.setPopupDisplayEnabled(true, false, this);
     biasSlider.setDoubleClickReturnValue(true, 0.0);
-    // Snap-to-center near 0.0 for Bias (±0.2 window)
+    // Configurar para mostrar 3 casas decimais para melhor precisão na exibição
+    biasSlider.setNumDecimalPlacesToDisplay(3);
+    // Função personalizada para formatação do texto com precisão adequada
+    biasSlider.textFromValueFunction = [](double value) {
+        return juce::String(value, 3);
+    };
+    // Melhorado o snap-to-center com janela menor e mais precisa
     biasSlider.onValueChange = [this]
     {
         if (biasSlider.isMouseButtonDown())
         {
             auto v = biasSlider.getValue();
-            if (std::abs(v) < 0.2 && v != 0.0)
+            
+            if (std::abs(v) < 0.01 && v != 0.0)
                 biasSlider.setValue(0.0, juce::dontSendNotification);
         }
     };
