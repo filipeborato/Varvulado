@@ -49,7 +49,7 @@ public:
         float v = drive * (hpOut + bias);
 
         // Polynomial pre-emphasis (soft clipping)
-        float poly = a1 * v + a3 * v * v * v;
+        float poly = a1 * v + a2 * v * v + a3 * v * v * v;
 
         // Tanh saturation (triode characteristic)
         float sat = std::tanh(poly);
@@ -70,6 +70,7 @@ public:
 private:
     // Soft-clipping polynomial coefficients
     const float a1 = 1.0f;
+	const float a2 = 0.3f; // Not used, but can be set for more complex models
     const float a3 = 0.2f;
     float lpPrev = 0.0f;
     float hpPrev = 0.0f;
