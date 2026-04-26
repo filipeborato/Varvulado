@@ -59,7 +59,7 @@ TubePreampPluginAudioProcessorEditor::TubePreampPluginAudioProcessorEditor(
 
     // Drive Slider
     driveSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-    driveSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 16);
+    driveSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 58, 18);
     driveSlider.setLookAndFeel(&vintageLNF);
     {
         juce::Slider::RotaryParameters rp;
@@ -81,12 +81,13 @@ TubePreampPluginAudioProcessorEditor::TubePreampPluginAudioProcessorEditor(
     // Drive Label
     driveLabel.setText("DRIVE", juce::dontSendNotification);
     driveLabel.setJustificationType(juce::Justification::centred);
-    driveLabel.setColour(juce::Label::textColourId, juce::Colours::white);
+    driveLabel.setFont(juce::Font(13.0f, juce::Font::bold));
+    driveLabel.setColour(juce::Label::textColourId, juce::Colour::fromRGB(255, 238, 190));
     addAndMakeVisible(driveLabel);
 
     // Output Slider
     outputSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-    outputSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 16);
+    outputSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 58, 18);
     outputSlider.setLookAndFeel(&vintageLNF);
     {
         juce::Slider::RotaryParameters rp;
@@ -108,12 +109,13 @@ TubePreampPluginAudioProcessorEditor::TubePreampPluginAudioProcessorEditor(
     // Output Label
     outputLabel.setText("OUTPUT", juce::dontSendNotification);
     outputLabel.setJustificationType(juce::Justification::centred);
-    outputLabel.setColour(juce::Label::textColourId, juce::Colours::white);
+    outputLabel.setFont(juce::Font(13.0f, juce::Font::bold));
+    outputLabel.setColour(juce::Label::textColourId, juce::Colour::fromRGB(255, 238, 190));
     addAndMakeVisible(outputLabel);
 
     // Bias Slider
     biasSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-    biasSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 16);
+    biasSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 58, 18);
     biasSlider.setLookAndFeel(&vintageLNF);
     {
         juce::Slider::RotaryParameters rp;
@@ -152,7 +154,8 @@ TubePreampPluginAudioProcessorEditor::TubePreampPluginAudioProcessorEditor(
     // Bias Label
     biasLabel.setText("BIAS", juce::dontSendNotification);
     biasLabel.setJustificationType(juce::Justification::centred);
-    biasLabel.setColour(juce::Label::textColourId, juce::Colours::white);
+    biasLabel.setFont(juce::Font(13.0f, juce::Font::bold));
+    biasLabel.setColour(juce::Label::textColourId, juce::Colour::fromRGB(255, 238, 190));
     addAndMakeVisible(biasLabel);
 }
 
@@ -173,12 +176,20 @@ void TubePreampPluginAudioProcessorEditor::paint(juce::Graphics& g) {
     else
         g.fillAll(juce::Colour::fromRGB(18, 12, 38)); // deep indigo fallback
 
+    auto controlShelf = getLocalBounds().reduced(18);
+    controlShelf.removeFromTop(172);
+    controlShelf.reduce(10, 8);
+    g.setColour(juce::Colours::black.withAlpha(0.14f));
+    g.fillRoundedRectangle(controlShelf.toFloat(), 7.0f);
+    g.setColour(juce::Colour::fromRGB(205, 164, 72).withAlpha(0.42f));
+    g.drawRoundedRectangle(controlShelf.toFloat().reduced(0.5f), 7.0f, 1.0f);
+
     // Header/title area, text centered but avoiding actual logo/tube bounds
     auto inner = getLocalBounds().reduced(20);
     auto header = inner.removeFromTop(160);
 
-    g.setColour(juce::Colours::white);
-    g.setFont(26.0f);
+    g.setColour(juce::Colour::fromRGB(255, 244, 214));
+    g.setFont(juce::Font(25.0f, juce::Font::bold));
 
     // Compute actual reserved widths (replicate draw logic)
     int leftReserve = 0;
@@ -266,23 +277,23 @@ void TubePreampPluginAudioProcessorEditor::resized() {
 
     // Controls area
     auto area = bounds.reduced(10);
-    const int labelH = 18;
+    const int labelH = 20;
     const int columns = 3;
-    int gap = 24; // start with a comfortable gap
+    int gap = 32; // start with a comfortable gap
 
     const int areaW = area.getWidth();
     const int areaH = area.getHeight();
     auto computeColW = [&](int g) { return (areaW - (columns - 1) * g) / columns; };
 
     int colW = computeColW(gap);
-    if (colW < 150) { gap = 16; colW = computeColW(gap); }
-    if (colW < 150) { gap = 8;  colW = computeColW(gap); }
+    if (colW < 150) { gap = 22; colW = computeColW(gap); }
+    if (colW < 150) { gap = 12; colW = computeColW(gap); }
     colW = juce::jmax(colW, 120);
 
-    const int padX = 10;
+    const int padX = 14;
     const int knobMaxByWidth  = colW - padX * 2;
-    const int knobMaxByHeight = areaH - labelH - 30;
-    const int knobSize = juce::jlimit(110, 180, juce::jmin(knobMaxByWidth, knobMaxByHeight));
+    const int knobMaxByHeight = areaH - labelH - 34;
+    const int knobSize = juce::jlimit(104, 142, juce::jmin(knobMaxByWidth, knobMaxByHeight));
 
     // Recalculate colW to match chosen knobSize
     colW = knobSize + padX * 2;
@@ -293,8 +304,8 @@ void TubePreampPluginAudioProcessorEditor::resized() {
     auto place = [&](juce::Label& lbl, juce::Slider& s, int idx) {
         juce::Rectangle<int> col(startX + idx * (colW + gap), topY, colW, areaH);
         lbl.setBounds(col.removeFromTop(labelH));
-        col.reduce(padX, 6);
-        col.setSize(col.getWidth(), knobSize + 26); // knob plus textbox space
+        col.reduce(padX, 8);
+        col.setSize(col.getWidth(), knobSize + 30); // knob plus textbox space
         s.setBounds(col);
     };
 

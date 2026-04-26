@@ -6,7 +6,7 @@
 
 class VintageLookAndFeel : public juce::LookAndFeel_V4 {
 public:
-    VintageLookAndFeel() = default;
+    VintageLookAndFeel();
     ~VintageLookAndFeel() override = default;
 
     void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height,
